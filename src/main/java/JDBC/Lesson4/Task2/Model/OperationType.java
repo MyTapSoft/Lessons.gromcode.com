@@ -1,0 +1,5 @@
+package JDBC.Lesson4.Task2.Model;
+
+public enum OperationType {
+    DELETE_FILE, ADD_UPDATE_FILE, GET_FILE, DELL_STORAGE, ADD_UPDATE_STORAGE, GET_STORAGE, TRANSFER_ALL_FILES
+}
