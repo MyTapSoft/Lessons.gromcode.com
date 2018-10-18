@@ -1,66 +1,51 @@
 package JDBC.Lesson4.Task2.DAO;
 
-
+import JDBC.Lesson4.Task2.Exceptions.InternalServerException;
 import JDBC.Lesson4.Task2.Model.File;
 import JDBC.Lesson4.Task2.Model.History;
 import JDBC.Lesson4.Task2.Model.OperationType;
 import JDBC.Lesson4.Task2.Model.Status;
+import JDBC.Lesson4.Task2.Validator.Validator;
 
 import java.sql.*;
 import java.util.Date;
 
 
 public class FileDAO {
-    public static File saveFile(File file) {
+    public static File saveFile(File file) throws SQLException { //Я не могу здесь не использовать SQLException из за Connection connection = getConnection()
         Date startTime = new Date();
-        try (Connection connection = JDBC.Lesson4.Connections.Connection.getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO FILES VALUES(?, ?, ?, ?, ?)")) {
-            saveUpdate(connection, statement, file, startTime.getTime());
-
-        } catch (SQLException e) {
-            System.err.println("Can't save file with ID: " + file.getId());
-            e.printStackTrace();
+        Validator.check(file);
+        try (Connection connection = JDBC.Lesson4.Connections.Connection.getConnection()) {
+            saveTransaction(connection, file, startTime.getTime());
         }
         return file;
     }
 
-    public static void deleteFile(long id) {
+    public static void deleteFile(long id) throws SQLException {
         Date startTime = new Date();
         try (Connection connection = JDBC.Lesson4.Connections.Connection.getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM FILES WHERE ID = ?")) {
-            dell(connection, statement, id, startTime.getTime());
+            dellTransaction(connection, statement, id, startTime.getTime());
 
-        } catch (SQLException e) {
-            System.err.println("Can't delete file with ID: " + id);
-            e.printStackTrace();
         }
     }
 
-    public static File getFile(long id) {
-        Date startTime = new Date();
+    public static File getFile(long id)throws SQLException {
         try (Connection connection = JDBC.Lesson4.Connections.Connection.getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM FILES WHERE ID = ?")) {
-            File file = null;
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
-                file = new File(resultSet.getLong(1), resultSet.getString(2), resultSet.getString(3), resultSet.getInt(4), StorageDAO.getStorage(resultSet.getLong(5)));
+                return new File(resultSet.getLong(1), resultSet.getString(2), resultSet.getString(3), resultSet.getInt(4), StorageDAO.getStorage(resultSet.getLong(5)));
             }
-            if (file != null)
-                HistoryDAO.saveToHistoryTransaction(new History(OperationType.GET_FILE, new Date().getTime() - startTime.getTime(), Status.SUCCESS));
 
-        } catch (SQLException e) {
-            System.err.println("Can't get file with ID: " + id);
-            e.printStackTrace();
         }
         return null;
     }
 
-    public static File updateFile(File file) {
+    public static File updateFile(File file) throws SQLException{
         Date startTime = new Date();
-        try (Connection connection = JDBC.Lesson4.Connections.Connection.getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE FILES SET NAME = ?, FORMAT = ?, FILE_SIZE= ?, STORAGE_ID = ? WHERE ID = ?")) {
-            saveUpdate(connection, statement, file, startTime.getTime());
+        try (Connection connection = JDBC.Lesson4.Connections.Connection.getConnection()) {
+            updateTransaction(connection, file, startTime.getTime());
 
-        } catch (SQLException e) {
-            System.err.println("Can't update File with id: " + file.getId());
-            e.printStackTrace();
         }
         return file;
     }
@@ -77,8 +62,8 @@ public class FileDAO {
         return totalSize;
     }
 
-    private static void saveUpdate(Connection connection, PreparedStatement statement, File file, long startTime) throws SQLException {
-        try {
+    private static void saveTransaction(Connection connection, File file, long startTime) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement("INSERT INTO FILES VALUES(?, ?, ?, ?, ?)")) {
             connection.setAutoCommit(false);
             statement.setLong(1, file.getId());
             statement.setString(2, file.getName());
@@ -87,21 +72,38 @@ public class FileDAO {
             statement.setLong(5, file.getStorage().getId());
 
             statement.executeUpdate();
-            HistoryDAO.saveToHistoryTransaction(new History(OperationType.ADD_UPDATE_FILE, new Date().getTime() - startTime, Status.SUCCESS));
+            HistoryDAO.saveToHistory(new History(OperationType.ADD_UPDATE_FILE, new Date().getTime() - startTime, Status.SUCCESS));
             connection.commit();
-        } catch (SQLException e) {
+        } catch (SQLException | InternalServerException e) {
             connection.rollback();
         }
     }
 
-    private static void dell(Connection connection, PreparedStatement statement, long fileId, long startTime) throws SQLException {
+    private static void updateTransaction(Connection connection, File file, long startTime) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement("UPDATE FILES SET NAME = ?, FORMAT = ?, FILE_SIZE = ?, STORAGE_ID = ? WHERE ID = ?")) {
+            connection.setAutoCommit(false);
+            statement.setString(1, file.getName());
+            statement.setString(2, file.getFormat());
+            statement.setInt(3, file.getFileSize());
+            statement.setLong(4, file.getStorage().getId());
+            statement.setLong(5, file.getId());
+
+            statement.executeUpdate();
+            HistoryDAO.saveToHistory(new History(OperationType.ADD_UPDATE_FILE, new Date().getTime() - startTime, Status.SUCCESS));
+            connection.commit();
+        } catch (SQLException | InternalServerException e) {
+            connection.rollback();
+        }
+    }
+
+    private static void dellTransaction(Connection connection, PreparedStatement statement, long fileId, long startTime) throws SQLException {
         try {
             connection.setAutoCommit(false);
             statement.setLong(1, fileId);
             statement.executeUpdate();
-            HistoryDAO.saveToHistoryTransaction(new History(OperationType.DELETE_FILE, new Date().getTime() - startTime, Status.SUCCESS));
+            HistoryDAO.saveToHistory(new History(OperationType.DELETE_FILE, new Date().getTime() - startTime, Status.SUCCESS));
             connection.commit();
-        } catch (SQLException e) {
+        } catch (SQLException | InternalServerException e) {
             connection.rollback();
         }
     }

@@ -1,6 +1,6 @@
 package JDBC.Lesson4.Task2.DAO;
 
-
+import JDBC.Lesson4.Task2.Exceptions.InternalServerException;
 import JDBC.Lesson4.Task2.Model.History;
 import JDBC.Lesson4.Task2.Model.OperationType;
 import JDBC.Lesson4.Task2.Model.Status;
@@ -11,7 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class HistoryDAO {
-    public static History saveToHistoryTransaction(History history) throws SQLException {
+    public static History saveToHistory(History history) throws SQLException, InternalServerException {
         try (Connection connection = JDBC.Lesson4.Connections.Connection.getConnection(); PreparedStatement statement = connection.prepareStatement("INSERT INTO HISTORY VALUES(?, ? ,? ,?)")) {
             statement.setLong(1, history.getId());
             statement.setString(2, String.valueOf(history.getOperationType()));
@@ -19,22 +19,22 @@ public class HistoryDAO {
             statement.setString(4, String.valueOf(history.getStatus()));
 
             int res = statement.executeUpdate();
-            if (res == 0) throw new SQLException("Transaction history hasn't been saved. ID: " + history.getId());
+            if (res == 0) throw new InternalServerException("Transaction history hasn't been saved. ID: " + history.getId());
 
         }
         return history;
     }
 
-    public static void dellHistoryTransaction(long id) throws SQLException {
+    public static void dellHistory(long id) throws SQLException, InternalServerException {
         try (Connection connection = JDBC.Lesson4.Connections.Connection.getConnection(); PreparedStatement statement = connection.prepareStatement("DELETE FROM HISTORY WHERE ID = ?")) {
             statement.setLong(1, id);
             int res = statement.executeUpdate();
-            if (res == 0) throw new SQLException("Cant delete transaction history. ID: " + id);
+            if (res == 0) throw new InternalServerException("Cant delete transaction history. ID: " + id);
 
         }
     }
 
-    public static History getHistoryTransaction(long id) throws SQLException {
+    public static History getHistory(long id) throws SQLException {
         try (Connection connection = JDBC.Lesson4.Connections.Connection.getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM HISTORY WHERE id = ?")) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
@@ -49,7 +49,7 @@ public class HistoryDAO {
         return null;
     }
 
-    public static History updateHistoryTransaction(History history) throws SQLException {
+    public static History updateHistory(History history) throws SQLException {
         try (Connection connection = JDBC.Lesson4.Connections.Connection.getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE HISTORY SET OPERATION_TYPE = ?, TIME_PROCESSED = ?, STATUS = ? WHERE ID = ?")) {
             statement.setString(1, String.valueOf(history.getOperationType()));
             statement.setLong(2, history.getTimeProcessed());
