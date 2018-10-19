@@ -3,13 +3,14 @@ package JDBC.Lesson4.Task2.Service;
 import JDBC.Lesson4.Task2.DAO.FileDAO;
 import JDBC.Lesson4.Task2.DAO.StorageDAO;
 import JDBC.Lesson4.Task2.Exceptions.BadRequestException;
+import JDBC.Lesson4.Task2.Exceptions.InternalServerException;
 import JDBC.Lesson4.Task2.Model.File;
 import JDBC.Lesson4.Task2.Model.Storage;
 
 import java.sql.SQLException;
 
 public class Service {
-    public File put(Storage storage, File file) throws SQLException, BadRequestException {
+    public File put(Storage storage, File file) throws SQLException, BadRequestException, InternalServerException {
         if (file.getStorage() == null) {
             file.setStorage(storage);
             if (FileDAO.getFile(file.getId()) == null) {
@@ -25,7 +26,7 @@ public class Service {
         return file;
     }
 
-    public void delete(Storage storage, File file) throws BadRequestException, SQLException {
+    public void delete(Storage storage, File file) throws BadRequestException, SQLException, InternalServerException {
         if (file.getStorage() == null) {
             throw new BadRequestException("File with ID: " + file.getId() + " doesn't have storage");
         } else if (file.getStorage().getId() != storage.getId())
@@ -40,7 +41,7 @@ public class Service {
         }
     }
 
-    public File transferFile(Storage storageFrom, Storage storageTo, long id) throws SQLException, BadRequestException {
+    public File transferFile(Storage storageFrom, Storage storageTo, long id) throws SQLException, BadRequestException, InternalServerException {
         File file = FileDAO.getFile(id);
         if (file == null) throw new BadRequestException("Fle doesn't exist");//Если файла не существует - вопрос почему? Либо ID не верный - это BadRequestException.
         // Либо он там должен быть, но его нет - тогда это InternalServerException

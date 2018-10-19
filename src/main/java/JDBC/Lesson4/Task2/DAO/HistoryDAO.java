@@ -34,11 +34,11 @@ public class HistoryDAO {
         }
     }
 
-    public static History getHistory(long id) throws SQLException {
+    public static History getHistory(long id) throws SQLException, InternalServerException {
         try (Connection connection = JDBC.Lesson4.Connections.Connection.getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM HISTORY WHERE id = ?")) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
-            if (resultSet == null) throw new SQLException("Cant find history with ID: " + id);
+            if (resultSet == null) throw new InternalServerException("Cant find history with ID: " + id);
             while (resultSet.next()) {
                 History history = new History(OperationType.valueOf(resultSet.getString(2)), resultSet.getLong(3), Status.valueOf(resultSet.getString(4)));
                 history.setId(resultSet.getLong(1));
@@ -49,7 +49,7 @@ public class HistoryDAO {
         return null;
     }
 
-    public static History updateHistory(History history) throws SQLException {
+    public static History updateHistory(History history) throws SQLException, InternalServerException {
         try (Connection connection = JDBC.Lesson4.Connections.Connection.getConnection(); PreparedStatement statement = connection.prepareStatement("UPDATE HISTORY SET OPERATION_TYPE = ?, TIME_PROCESSED = ?, STATUS = ? WHERE ID = ?")) {
             statement.setString(1, String.valueOf(history.getOperationType()));
             statement.setLong(2, history.getTimeProcessed());
@@ -57,7 +57,7 @@ public class HistoryDAO {
             statement.setLong(4, history.getId());
 
             int res = statement.executeUpdate();
-            if (res == 0) throw new SQLException("History hasn't been saved. ID: " + history.getId());
+            if (res == 0) throw new InternalServerException("History hasn't been updated. ID: " + history.getId());
 
         }
         return history;
