@@ -38,7 +38,7 @@ public class ProductDAO {
         try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            Query<Product> query = session.createQuery("FROM Product WHERE NAME = :name", Product.class);
+            org.hibernate.query.Query<Product> query = session.createQuery("FROM Product WHERE NAME = :name", Product.class);
             query.setParameter("name", name);
             result = query.list();
             transaction.commit();
@@ -52,14 +52,14 @@ public class ProductDAO {
         return result;
     }
 
-    public static List findByContainedName(String name) throws BadRequestException {
+    public static List<Product> findByContainedName(String name) throws BadRequestException {
         if (name == null) throw new NullPointerException("Name is NULL");
         Transaction transaction = null;
         List<Product> result = new ArrayList<>();
         try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            Query<Product> query = session.createQuery("FROM Product WHERE NAME LIKE :name", Product.class);
+            org.hibernate.query.Query<Product> query = session.createQuery("FROM Product WHERE NAME LIKE :name", Product.class);
             query.setParameter("name", "%" + name + "%");
             result = query.list();
             transaction.commit();
@@ -80,7 +80,7 @@ public class ProductDAO {
         try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            Query<Product> query = session.createQuery("FROM Product WHERE price >= :lowestPrice AND price <= :highestPrice", Product.class);
+            org.hibernate.query.Query<Product> query = session.createQuery("FROM Product WHERE price >= :lowestPrice AND price <= :highestPrice", Product.class);
             query.setParameter("lowestPrice", price - delta);
             query.setParameter("highestPrice", price + delta);
             result = query.list();
@@ -91,7 +91,8 @@ public class ProductDAO {
             e.printStackTrace();
             if (transaction != null) transaction.rollback();
         }
-        if (result.size() == 0) throw new BadRequestException("Where's no Products with price diapason from : " + (price - delta) + " to" + (price + delta));
+        if (result.size() == 0)
+            throw new BadRequestException("Where's no Products with price diapason from : " + (price - delta) + " to" + (price + delta));
         return result;
     }
 
@@ -102,7 +103,7 @@ public class ProductDAO {
         try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            Query<Product> query = session.createQuery("FROM Product WHERE price >= :lowestPrice AND price <= :highestPrice ORDER BY :order desc", Product.class);
+            org.hibernate.query.Query<Product> query = session.createQuery("FROM Product WHERE price >= :lowestPrice AND price <= :highestPrice ORDER BY :order desc", Product.class);
             query.setParameter("lowestPrice", price - delta);
             query.setParameter("highestPrice", price + delta);
             query.setParameter("order", price);
@@ -114,17 +115,18 @@ public class ProductDAO {
             e.printStackTrace();
             if (transaction != null) transaction.rollback();
         }
-        if (result.size() == 0) throw new BadRequestException("Where's no Products with price diapason from : " + (price - delta) + " to" + (price + delta));
+        if (result.size() == 0)
+            throw new BadRequestException("Where's no Products with price diapason from : " + (price - delta) + " to" + (price + delta));
         return result;
     }
 
     public static List<Product> findByNameSortedAsc(String name) throws BadRequestException {//Поиск продуктов по имени + сортировка по имени? Это как? У их же имена одинаковые.
         Transaction transaction = null;
         List<Product> result = new ArrayList<>();
-        try(Session session = createSessionFactory().openSession()){
+        try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            Query<Product> query = session.createQuery("FROM Product WHERE name = :name ORDER BY :order asc",Product.class);
+            org.hibernate.query.Query<Product> query = session.createQuery("FROM Product WHERE name = :name ORDER BY :order asc", Product.class);
             query.setParameter("name", name);
             query.setParameter("order", name);
             result = query.list();
@@ -143,10 +145,10 @@ public class ProductDAO {
     public static List<Product> findByNameSortedDesc(String name) throws BadRequestException {//Поиск продуктов по имени + сортировка по имени? Это как? У их же имена одинаковые.
         Transaction transaction = null;
         List<Product> result = new ArrayList<>();
-        try(Session session = createSessionFactory().openSession()){
+        try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            Query<Product> query = session.createQuery("FROM Product WHERE name = :name ORDER BY :order desc",Product.class);
+            org.hibernate.query.Query<Product> query = session.createQuery("FROM Product WHERE name = :name ORDER BY :order desc", Product.class);
             query.setParameter("name", name);
             query.setParameter("order", name);
             result = query.list();
