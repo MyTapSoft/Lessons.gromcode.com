@@ -5,114 +5,162 @@ import JDBC.Lesson6.Task2.Model.Product;
 import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDAO {
     private static SessionFactory sessionFactory;
 
-    public static List findById(long id) throws BadRequestException {
+    public static Product findById(long id) throws BadRequestException {
         Transaction transaction = null;
-        List products = null;
+        Product result = null;
         try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            Query query = session.createQuery("FROM PRODUCT WHERE ID = id");
+            Query query = session.createQuery("FROM Product WHERE ID = :id");
             query.setParameter("id", id);
-            products = query.list();
+            result = (Product) query.uniqueResult();
             transaction.commit();
         } catch (HibernateException e) {
-            System.err.println("Error with save transaction");
+            System.err.println("Error with findById transaction");
             e.printStackTrace();
             if (transaction != null)
                 transaction.rollback();
         }
-        if (products == null) throw new BadRequestException("File with ID: " + id + " doesn't exist");
-        return products;
+        if (result == null) throw new BadRequestException("File with ID: " + id + " doesn't exist");
+        return result;
     }
 
-    public static Product findByName(Product product) {
+    public static List<Product> findByName(String name) throws BadRequestException {
+        if (name == null) throw new NullPointerException("Name is NULL");
         Transaction transaction = null;
+        List<Product> result = new ArrayList<>();
         try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            session.delete(product);
+            Query<Product> query = session.createQuery("FROM Product WHERE NAME = :name", Product.class);
+            query.setParameter("name", name);
+            result = query.list();
             transaction.commit();
         } catch (HibernateException e) {
-            System.err.println("Error with delete transaction");
+            System.err.println("Error with findByName transaction");
             e.printStackTrace();
             if (transaction != null)
                 transaction.rollback();
         }
-        return product;
+        if (result.size() == 0) throw new BadRequestException("File with name: " + name + " doesn't exist");
+        return result;
     }
 
-    public static Product update(Product product) {
+    public static List findByContainedName(String name) throws BadRequestException {
+        if (name == null) throw new NullPointerException("Name is NULL");
         Transaction transaction = null;
+        List<Product> result = new ArrayList<>();
         try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            session.update(product);
+            Query<Product> query = session.createQuery("FROM Product WHERE NAME LIKE :name", Product.class);
+            query.setParameter("name", "%" + name + "%");
+            result = query.list();
             transaction.commit();
         } catch (HibernateException e) {
-            System.err.println("Error with update transaction");
+            System.err.println("Error with findByContainedName transaction");
             e.printStackTrace();
             if (transaction != null)
                 transaction.rollback();
         }
-        return product;
+        if (result.size() == 0) throw new BadRequestException("Files that contain name: " + name + " doesn't exist");
+        return result;
     }
 
-    public static void saveAll(List<Product> products) {
+    public static List<Product> findByPrice(int price, int delta) throws BadRequestException {
+        if (price - delta < 0) throw new BadRequestException("Price's less than 0");
         Transaction transaction = null;
+        List<Product> result = new ArrayList<>();
         try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            for (Product product : products) {
-                session.save(product);
-            }
+            Query<Product> query = session.createQuery("FROM Product WHERE price >= :lowestPrice AND price <= :highestPrice", Product.class);
+            query.setParameter("lowestPrice", price - delta);
+            query.setParameter("highestPrice", price + delta);
+            result = query.list();
             transaction.commit();
+
         } catch (HibernateException e) {
-            System.err.println("Error with saveAll transaction");
+            System.err.println("Error with findByPrice transaction");
             e.printStackTrace();
-            if (transaction != null)
-                transaction.rollback();
+            if (transaction != null) transaction.rollback();
         }
+        if (result.size() == 0) throw new BadRequestException("Where's no Products with price diapason from : " + (price - delta) + " to" + (price + delta));
+        return result;
     }
 
-    public static void deleteAll(List<Product> products) {
+    public static List<Product> findByPriceSortedDesc(int price, int delta) throws BadRequestException {//В условии написано по убыванию, но метод назван desc?
+        if (price - delta < 0) throw new BadRequestException("Price's less than 0");
         Transaction transaction = null;
+        List<Product> result = new ArrayList<>();
         try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            for (Product product : products) {
-                session.delete(product);
-            }
+            Query<Product> query = session.createQuery("FROM Product WHERE price >= :lowestPrice AND price <= :highestPrice ORDER BY :order desc", Product.class);
+            query.setParameter("lowestPrice", price - delta);
+            query.setParameter("highestPrice", price + delta);
+            query.setParameter("order", price);
+            result = query.list();
             transaction.commit();
+
         } catch (HibernateException e) {
-            System.err.println("Error with saveAll transaction");
+            System.err.println("Error with findByPrice transaction");
             e.printStackTrace();
-            if (transaction != null)
-                transaction.rollback();
+            if (transaction != null) transaction.rollback();
         }
+        if (result.size() == 0) throw new BadRequestException("Where's no Products with price diapason from : " + (price - delta) + " to" + (price + delta));
+        return result;
     }
 
-    public static void updateAll(List<Product> products) {
+    public static List<Product> findByNameSortedAsc(String name) throws BadRequestException {//Поиск продуктов по имени + сортировка по имени? Это как? У их же имена одинаковые.
         Transaction transaction = null;
-        try (Session session = createSessionFactory().openSession()) {
+        List<Product> result = new ArrayList<>();
+        try(Session session = createSessionFactory().openSession()){
             transaction = session.getTransaction();
             transaction.begin();
-            for (Product product : products) {
-                session.update(product);
-            }
+            Query<Product> query = session.createQuery("FROM Product WHERE name = :name ORDER BY :order asc",Product.class);
+            query.setParameter("name", name);
+            query.setParameter("order", name);
+            result = query.list();
             transaction.commit();
+
         } catch (HibernateException e) {
-            System.err.println("Error with saveAll transaction");
+            System.err.println("Error with findByNameSortedAsc transaction");
             e.printStackTrace();
-            if (transaction != null)
-                transaction.rollback();
+            if (transaction != null) transaction.rollback();
         }
+        if (result.size() == 0) throw new BadRequestException("File with name: " + name + " doesn't exist");
+        return result;
+
     }
 
+    public static List<Product> findByNameSortedDesc(String name) throws BadRequestException {//Поиск продуктов по имени + сортировка по имени? Это как? У их же имена одинаковые.
+        Transaction transaction = null;
+        List<Product> result = new ArrayList<>();
+        try(Session session = createSessionFactory().openSession()){
+            transaction = session.getTransaction();
+            transaction.begin();
+            Query<Product> query = session.createQuery("FROM Product WHERE name = :name ORDER BY :order desc",Product.class);
+            query.setParameter("name", name);
+            query.setParameter("order", name);
+            result = query.list();
+            transaction.commit();
+
+        } catch (HibernateException e) {
+            System.err.println("Error with findByNameSortedDesc transaction");
+            e.printStackTrace();
+            if (transaction != null) transaction.rollback();
+        }
+        if (result.size() == 0) throw new BadRequestException("File with name: " + name + " doesn't exist");
+        return result;
+
+    }
 
     private static SessionFactory createSessionFactory() {
         if (sessionFactory == null)

@@ -86,7 +86,7 @@ public class ProductDAO {
             }
             transaction.commit();
         } catch (HibernateException e) {
-            System.err.println("Error with saveAll transaction");
+            System.err.println("Error with deleteAll transaction");
             e.printStackTrace();
             if (transaction != null)
                 transaction.rollback();
@@ -102,7 +102,7 @@ public class ProductDAO {
             }
             transaction.commit();
         } catch (HibernateException e) {
-            System.err.println("Error with saveAll transaction");
+            System.err.println("Error with updateAll transaction");
             e.printStackTrace();
             if (transaction != null)
                 transaction.rollback();
