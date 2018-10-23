@@ -17,7 +17,7 @@ public class ProductDAO {
         try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            Query query = session.createQuery("FROM Product WHERE ID = :id");
+            org.hibernate.query.Query query = session.createQuery("FROM Product WHERE ID = :id", Product.class);
             query.setParameter("id", id);
             result = (Product) query.uniqueResult();
             transaction.commit();
