@@ -17,7 +17,8 @@ public class ProductDAO {
         try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            Query query = session.createQuery("FROM Product WHERE ID = :id");
+            SQLQuery query = session.createSQLQuery( "SELECT * FROM Product WHERE ID = :id");
+            query.addEntity(Product.class);
             query.setParameter("id", id);
             result = (Product) query.uniqueResult();
             transaction.commit();
@@ -38,7 +39,8 @@ public class ProductDAO {
         try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            org.hibernate.query.Query<Product> query = session.createQuery("FROM Product WHERE NAME = :name", Product.class);
+            SQLQuery<Product> query = session.createSQLQuery("SELECT * FROM Product WHERE NAME = :name");
+            query.addEntity(Product.class);
             query.setParameter("name", name);
             result = query.list();
             transaction.commit();
@@ -59,7 +61,8 @@ public class ProductDAO {
         try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            org.hibernate.query.Query<Product> query = session.createQuery("FROM Product WHERE NAME LIKE :name", Product.class);
+            SQLQuery<Product> query = session.createSQLQuery("SELECT * FROM Product WHERE NAME LIKE :name");
+            query.addEntity(Product.class);
             query.setParameter("name", "%" + name + "%");
             result = query.list();
             transaction.commit();
@@ -80,7 +83,8 @@ public class ProductDAO {
         try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            org.hibernate.query.Query<Product> query = session.createQuery("FROM Product WHERE price >= :lowestPrice AND price <= :highestPrice", Product.class);
+            SQLQuery<Product> query = session.createSQLQuery("SELECT * FROM Product WHERE price >= :lowestPrice AND price <= :highestPrice");
+            query.addEntity(Product.class);
             query.setParameter("lowestPrice", price - delta);
             query.setParameter("highestPrice", price + delta);
             result = query.list();
@@ -103,7 +107,8 @@ public class ProductDAO {
         try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            org.hibernate.query.Query<Product> query = session.createQuery("FROM Product WHERE price >= :lowestPrice AND price <= :highestPrice ORDER BY :order desc", Product.class);
+            SQLQuery<Product> query = session.createSQLQuery("SELECT * FROM Product WHERE price >= :lowestPrice AND price <= :highestPrice ORDER BY :order desc");
+            query.addEntity(Product.class);
             query.setParameter("lowestPrice", price - delta);
             query.setParameter("highestPrice", price + delta);
             query.setParameter("order", price);
@@ -126,7 +131,8 @@ public class ProductDAO {
         try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            org.hibernate.query.Query<Product> query = session.createQuery("FROM Product WHERE name = :name ORDER BY :order asc", Product.class);
+            SQLQuery<Product> query = session.createSQLQuery("SELECT * FROM Product WHERE name = :name ORDER BY :order asc");
+            query.addEntity(Product.class);
             query.setParameter("name", name);
             query.setParameter("order", name);
             result = query.list();
@@ -148,7 +154,8 @@ public class ProductDAO {
         try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            org.hibernate.query.Query<Product> query = session.createQuery("FROM Product WHERE name = :name ORDER BY :order desc", Product.class);
+            SQLQuery<Product> query = session.createSQLQuery("FROM Product WHERE name = :name ORDER BY :order desc");
+            query.addEntity(Product.class);
             query.setParameter("name", name);
             query.setParameter("order", name);
             result = query.list();
