@@ -12,5 +12,7 @@
         <mapping class="JDBC.Lesson6.Task1.Model.Product"/>
         <mapping class="JDBC.Lesson6.Task2.Model.Product"/>
         <mapping class="JDBC.Lesson6.Task3.Model.Product"/>
+        <mapping class="JDBC.Lesson7.Model.Hotel"/>
+        <mapping class="JDBC.Lesson7.Model.Room"/>
     </session-factory>
 </hibernate-configuration>

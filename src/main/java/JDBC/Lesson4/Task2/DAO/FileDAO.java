@@ -32,7 +32,7 @@ public class FileDAO {
         try (Connection connection = JDBC.Lesson4.Connections.Connection.getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM FILES WHERE ID = ?")) {
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
-            if (resultSet == null) throw new InternalServerException("Can't get file. ID: " + id);
+            if (resultSet == null) throw new InternalServerException("Can't findById file. ID: " + id);
             while (resultSet.next()) {
                 return new File(resultSet.getLong(1), resultSet.getString(2), resultSet.getString(3), resultSet.getInt(4), StorageDAO.getStorage(resultSet.getLong(5)));
             }
@@ -55,7 +55,7 @@ public class FileDAO {
         try (Connection connection = JDBC.Lesson4.Connections.Connection.getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT FILE_SIZE FROM FILES WHERE STORAGE_ID = ?")) {
             statement.setLong(1, storageId);
             ResultSet resultSet = statement.executeQuery();
-            if (resultSet == null) throw new InternalServerException("Can't get all files size. ID: " + storageId);
+            if (resultSet == null) throw new InternalServerException("Can't findById all files size. ID: " + storageId);
 
             while (resultSet.next()) {
                 totalSize += resultSet.getInt(1);
