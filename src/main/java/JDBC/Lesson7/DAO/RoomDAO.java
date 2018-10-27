@@ -8,13 +8,14 @@ public class RoomDAO {
     private static SessionFactory sessionFactory;
 
     public static Room save(Room room) {
-        if (room == null) throw new NullPointerException("Room's null");
+        if (room == null) throw new NullPointerException("Hotel's null");
         Transaction transaction = null;
         try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
             session.save(room);
             transaction.commit();
+            System.out.println("Done");
         } catch (HibernateException e) {
             System.err.println("Can't save room with ID: " + room.getId());
             e.printStackTrace();
@@ -32,43 +33,49 @@ public class RoomDAO {
             transaction.begin();
             result = session.get(Room.class, id);
             transaction.commit();
+            System.out.println("Done");
+
         } catch (HibernateException e) {
-            System.err.println("Can't findById Room with ID: " + id);
+            System.err.println("Can't findById hotel with ID: " + id);
             e.printStackTrace();
             if (transaction != null) transaction.rollback();
         }
         return result;
     }
 
-    public static void delete(long id) {
+    public static void delete(long id){
         Transaction transaction = null;
-        try (Session session = createSessionFactory().openSession()) {
+        try(Session session = createSessionFactory().openSession()){
             transaction = session.getTransaction();
             transaction.begin();
             session.delete(session.get(Room.class, id));
             transaction.commit();
-        } catch (HibernateException e) {
-            System.err.println("Can't delete Room with ID: " + id);
+            System.out.println("Done");
+
+        }catch (HibernateException e) {
+            System.err.println("Can't delete hotel with ID: " + id);
             e.printStackTrace();
             if (transaction != null) transaction.rollback();
         }
     }
 
-    public static Room update(Room hotel) {
-        if (hotel == null) throw new NullPointerException("Hotel's null");
+    public static Room update(Room room) {
+        if (room == null) throw new NullPointerException("Hotel's null");
         Transaction transaction = null;
         try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            session.update(hotel);
+            session.update(room);
             transaction.commit();
+            System.out.println("Done");
+
         } catch (HibernateException e) {
-            System.err.println("Can't update Room with ID: " + hotel.getId());
+            System.err.println("Can't update hotel with ID: " + room.getId());
             e.printStackTrace();
             if (transaction != null)
                 transaction.rollback();
         }
-        return hotel;
+        return room;
     }
 
 

@@ -15,6 +15,7 @@ public class HotelDAO {
             transaction.begin();
             session.save(hotel);
             transaction.commit();
+            System.out.println("Done");
         } catch (HibernateException e) {
             System.err.println("Can't save hotel with ID: " + hotel.getId());
             e.printStackTrace();
@@ -32,6 +33,8 @@ public class HotelDAO {
             transaction.begin();
             result = session.get(Hotel.class, id);
             transaction.commit();
+            System.out.println("Done");
+
         } catch (HibernateException e) {
             System.err.println("Can't findById hotel with ID: " + id);
             e.printStackTrace();
@@ -47,6 +50,8 @@ public class HotelDAO {
             transaction.begin();
             session.delete(session.get(Hotel.class, id));
             transaction.commit();
+            System.out.println("Done");
+
         }catch (HibernateException e) {
             System.err.println("Can't delete hotel with ID: " + id);
             e.printStackTrace();
@@ -62,6 +67,8 @@ public class HotelDAO {
             transaction.begin();
             session.update(hotel);
             transaction.commit();
+            System.out.println("Done");
+
         } catch (HibernateException e) {
             System.err.println("Can't update hotel with ID: " + hotel.getId());
             e.printStackTrace();
@@ -74,7 +81,7 @@ public class HotelDAO {
 
     private static SessionFactory createSessionFactory() {
         if (sessionFactory == null)
-            sessionFactory = new Configuration().buildSessionFactory();
+            sessionFactory = new Configuration().configure().buildSessionFactory();
         return sessionFactory;
     }
 }

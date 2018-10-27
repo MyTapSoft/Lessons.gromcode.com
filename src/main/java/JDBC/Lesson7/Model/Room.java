@@ -5,48 +5,49 @@ import java.util.Date;
 
 @Entity
 @Table(name = "ROOM")
-
 public class Room {
+    @Id
     private long id;
+    @Column(name = "NUMBER_OF_GUESTS")
     private int numberOfGuests;
+    @Column(name = "PRICE")
     private double price;
+    @Column(name = "BREAKFAST_INCLUDED")
     private int breakfastIncluded;
+    @Column(name = "PETS_ALLOWED")
     private int petsAllowed;
+    @Column(name = "DATE_AVAILABLE_FORM")
     private Date dateAvailableFrom;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID")
+    @MapsId
     private Hotel hotel;
 
-    @Id
+
     public long getId() {
         return id;
     }
 
-    @Column(name = "NUMBER_OF_GUESTS")
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
 
-    @Column(name = "PRICE")
     public double getPrice() {
         return price;
     }
 
-    @Column(name = "BREAKFAST_INCLUDED")
     public int getBreakfastIncluded() {
         return breakfastIncluded;
     }
 
-    @Column(name = "PETS_ALLOWED")
     public int getPetsAllowed() {
         return petsAllowed;
     }
 
-    @Column(name = "DATE_AVAILABLE_FORM")
     public Date getDateAvailableFrom() {
         return dateAvailableFrom;
     }
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
     public Hotel getHotel() {
         return hotel;
     }
