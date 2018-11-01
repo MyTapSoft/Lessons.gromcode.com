@@ -3,7 +3,7 @@ package JDBC.Lesson8.Model;
 import javax.persistence.*;
 import java.util.Date;
 @Entity
-@Table(name = "ORDER")
+@Table(name = "ORDERS")
 public class Order {
     @Id
     @SequenceGenerator(name = "HT_SEQ", sequenceName = "HOTEL_SEQ", allocationSize = 1)
@@ -11,7 +11,7 @@ public class Order {
     @Column(name = "ID")
     private long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID")
+    @JoinColumn(name = "USERS_ID")
     private User userOrdered;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ROOM_ID")

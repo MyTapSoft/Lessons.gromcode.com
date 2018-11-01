@@ -5,7 +5,6 @@ import JDBC.Lesson8.DAO.OrderDAO;
 import JDBC.Lesson8.DAO.RoomDAO;
 import JDBC.Lesson8.DAO.UserDAO;
 import JDBC.Lesson8.Exceptions.BadRequestException;
-
 import JDBC.Lesson8.Model.*;
 
 
@@ -33,8 +32,13 @@ public class Service {
         if (dateTo.getTime() - dateFrom.getTime() < 0) throw new BadRequestException("Wrong dates");
         Order order = new Order();
         Room room = RoomDAO.findById(roomId);
+        if (room == null) throw new BadRequestException("There's no room with id: " + roomId);
         User user = UserDAO.findById(userId);
+        if (user == null) throw new BadRequestException("There's no user with id: " + userId);
         Hotel hotel = HotelDAO.findById(hotelId);
+        if (hotel == null) throw new BadRequestException("There's no hotel with id: " + hotelId);
+        if (!hotel.getRooms().contains(room)) throw new BadRequestException("Room: " + roomId + " doesn't belong to hotel: " + hotelId);
+
         double price = (dateTo.getTime() - dateFrom.getTime()) / (1000 * 60 * 60) * room.getPrice();
         order.setRoom(room);
         order.setDateFrom(dateFrom);
@@ -45,8 +49,9 @@ public class Service {
 
     }
 
-    public void cancelReservation(long roomId, long userId) {
-
+    public void cancelReservation(long roomId, long userId) throws BadRequestException {
+        Order order = OrderDAO.findById(roomId, userId);
+        OrderDAO.delete(order.getId());
     }
 
     public User registerUser(User user) throws BadRequestException {

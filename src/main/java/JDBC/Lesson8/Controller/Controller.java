@@ -21,23 +21,23 @@ public class Controller extends Service {
         return super.findRooms(filter);
     }
 
-    public Order bookRoom(long roomId, long userId, long hotelId, Date dateFrom, Date dateTo) {
-
+    public Order bookRoom(long roomId, long userId, long hotelId, Date dateFrom, Date dateTo) throws BadRequestException {
+        return super.bookRoom(roomId, userId, hotelId, dateFrom, dateTo);
     }
 
-    public void cancelReservation(long roomId, long userId) {
-
+    public void cancelReservation(long roomId, long userId) throws BadRequestException {
+        super.cancelReservation(roomId, userId);
     }
 
-    public User registerUser(User user) {
-        return user;
+    public User registerUser(User user) throws BadRequestException {
+        return super.registerUser(user);
     }
 
-    public User login(String userName, String password) {
-        return null;
+    public User login(String userName, String password) throws BadRequestException {
+        return super.login(userName, password);
     }
 
-    public User logout(User user) {
-        return null;
+    public User logout(User user) throws BadRequestException {
+        return super.logout(user);
     }
 }
