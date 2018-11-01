@@ -21,6 +21,8 @@ public class User {
     private UserType userType;
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Order> orders;
+    @Column(name = "LOGIN_STATUS")
+    private boolean loginStatus;
 
     public long getId() {
         return id;
@@ -70,6 +72,14 @@ public class User {
         this.orders = orders;
     }
 
+    public boolean isLoginStatus() {
+        return loginStatus;
+    }
+
+    public void setLoginStatus(boolean loginStatus) {
+        this.loginStatus = loginStatus;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -79,6 +89,7 @@ public class User {
                 ", country='" + country + '\'' +
                 ", userType=" + userType +
                 ", orders=" + orders +
+                ", loginStatus=" + loginStatus +
                 '}';
     }
 }

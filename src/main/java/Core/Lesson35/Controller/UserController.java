@@ -21,5 +21,4 @@ public class UserController {
     public User logout(User user) throws BadRequestException, InternalServerException, FileNotFoundException {
         return userService.logout(user);
     }
-
 }
