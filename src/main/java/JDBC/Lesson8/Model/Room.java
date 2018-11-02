@@ -1,79 +1,69 @@
-package JDBC.Lesson7.Model;
+package JDBC.Lesson8.Model;
 
 import javax.persistence.*;
 import java.util.Date;
-
 @Entity
 @Table(name = "ROOM")
 public class Room {
     @Id
+    @SequenceGenerator(name = "HT_SEQ", sequenceName = "HOTEL_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "HT_SEQ")
+    @Column(name = "ID")
     private long id;
     @Column(name = "NUMBER_OF_GUESTS")
     private int numberOfGuests;
     @Column(name = "PRICE")
     private double price;
     @Column(name = "BREAKFAST_INCLUDED")
-    private int breakfastIncluded;
-    @Column(name = "PETS_ALLOWED")
-    private int petsAllowed;
-    @Column(name = "DATE_AVAILABLE_FORM")
+    private boolean breakfastIncluded;
+    @Column(name = "DATE_AVAILABLE_FROM")
     private Date dateAvailableFrom;
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ID")
-    @MapsId
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "HOTEL_ID")
     private Hotel hotel;
-
 
     public long getId() {
         return id;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public int getBreakfastIncluded() {
-        return breakfastIncluded;
-    }
-
-    public int getPetsAllowed() {
-        return petsAllowed;
-    }
-
-    public Date getDateAvailableFrom() {
-        return dateAvailableFrom;
-    }
-
-    public Hotel getHotel() {
-        return hotel;
     }
 
     public void setId(long id) {
         this.id = id;
     }
 
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
     public void setNumberOfGuests(int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
+    }
+
+    public double getPrice() {
+        return price;
     }
 
     public void setPrice(double price) {
         this.price = price;
     }
 
-    public void setBreakfastIncluded(int breakfastIncluded) {
+    public boolean isBreakfastIncluded() {
+        return breakfastIncluded;
+    }
+
+    public void setBreakfastIncluded(boolean breakfastIncluded) {
         this.breakfastIncluded = breakfastIncluded;
     }
 
-    public void setPetsAllowed(int petsAllowed) {
-        this.petsAllowed = petsAllowed;
+    public Date getDateAvailableFrom() {
+        return dateAvailableFrom;
     }
 
     public void setDateAvailableFrom(Date dateAvailableFrom) {
         this.dateAvailableFrom = dateAvailableFrom;
+    }
+
+    public Hotel getHotel() {
+        return hotel;
     }
 
     public void setHotel(Hotel hotel) {
@@ -87,7 +77,6 @@ public class Room {
                 ", numberOfGuests=" + numberOfGuests +
                 ", price=" + price +
                 ", breakfastIncluded=" + breakfastIncluded +
-                ", petsAllowed=" + petsAllowed +
                 ", dateAvailableFrom=" + dateAvailableFrom +
                 ", hotel=" + hotel +
                 '}';
