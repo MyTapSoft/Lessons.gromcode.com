@@ -1,6 +1,9 @@
 package JDBC.Lesson8;
 
 import JDBC.Lesson8.DAO.HotelDAO;
+import JDBC.Lesson8.DAO.OrderDAO;
+import JDBC.Lesson8.DAO.RoomDAO;
+import JDBC.Lesson8.DAO.UserDAO;
 import JDBC.Lesson8.Model.*;
 
 import java.util.ArrayList;
@@ -46,6 +49,9 @@ public class Test {
 
 
         HotelDAO.save(hotel);
+        RoomDAO.save(room);
+        UserDAO.save(user);
+        OrderDAO.save(order);
     }
 
 }

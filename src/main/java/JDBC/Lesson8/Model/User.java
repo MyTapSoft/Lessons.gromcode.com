@@ -19,7 +19,7 @@ public class User {
     private String country;
     @Column(name = "USER_TYPE")
     private UserType userType;
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "userOrdered", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Order> orders;
     @Column(name = "LOGIN_STATUS")
     private boolean loginStatus;

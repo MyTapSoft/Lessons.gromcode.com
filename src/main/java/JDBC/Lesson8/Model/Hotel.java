@@ -18,7 +18,7 @@ public class Hotel {
     private String city;
     @Column(name = "STREET")
     private String street;
-    @OneToMany(mappedBy = "POST", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Room> rooms;
 
     public long getId() {
