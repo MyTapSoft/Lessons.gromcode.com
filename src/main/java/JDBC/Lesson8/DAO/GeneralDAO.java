@@ -1,6 +1,5 @@
 package JDBC.Lesson8.DAO;
 
-import JDBC.Lesson8.Model.Hotel;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
