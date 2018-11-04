@@ -18,7 +18,11 @@ public class Hotel {
     private String city;
     @Column(name = "STREET")
     private String street;
+<<<<<<< HEAD
     @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+=======
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
+>>>>>>> 7f3e887d27be480a19cbd217de150fb5a64f2e65
     private List<Room> rooms;
 
     public long getId() {
