@@ -11,10 +11,10 @@ import org.hibernate.cfg.Configuration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HotelDAO {
+public class HotelDAO extends GeneralDAO<Hotel> {
     private static SessionFactory sessionFactory;
 
-    public static List<Hotel> findHotelByName(String name) throws BadRequestException {
+    protected static List<Hotel> findHotelByName(String name) throws BadRequestException {
         Transaction transaction = null;
         List<Hotel> result = new ArrayList<>();
         try (Session session = createSessionFactory().openSession()) {
@@ -33,7 +33,8 @@ public class HotelDAO {
         if (result.size() == 0) throw new BadRequestException("Hotel with name: " + name + " doesn't exist");
         return result;
     }
-    public static List<Hotel> findHotelByCity(String city) throws BadRequestException {
+
+    protected static List<Hotel> findHotelByCity(String city) throws BadRequestException {
         Transaction transaction = null;
         List<Hotel> result = new ArrayList<>();
         try (Session session = createSessionFactory().openSession()) {
@@ -53,21 +54,8 @@ public class HotelDAO {
         return result;
     }
 
-    public static Hotel save(Hotel hotel) {
-        Transaction transaction = null;
-        try (Session session = createSessionFactory().openSession()) {
-            transaction = session.getTransaction();
-            transaction.begin();
-            session.save(hotel);
-            transaction.commit();
-            System.out.println("Done");
-        } catch (HibernateException e) {
-            System.err.println("Can't save hotel with ID: " + hotel.getId());
-            e.printStackTrace();
-            if (transaction != null)
-                transaction.rollback();
-        }
-        return hotel;
+    protected Hotel save(Hotel hotel) {
+        return super.save(hotel);
     }
 
     public static Hotel findById(long id) {
@@ -88,38 +76,12 @@ public class HotelDAO {
         return result;
     }
 
-    public static void delete(long id){
-        Transaction transaction = null;
-        try(Session session = createSessionFactory().openSession()){
-            transaction = session.getTransaction();
-            transaction.begin();
-            session.delete(session.get(Hotel.class, id));
-            transaction.commit();
-            System.out.println("Done");
-
-        }catch (HibernateException e) {
-            System.err.println("Can't delete hotel with ID: " + id);
-            e.printStackTrace();
-            if (transaction != null) transaction.rollback();
-        }
+    protected void delete(long id) {
+        super.delete(findById(id));
     }
 
-    public static Hotel update(Hotel hotel) {
-        Transaction transaction = null;
-        try (Session session = createSessionFactory().openSession()) {
-            transaction = session.getTransaction();
-            transaction.begin();
-            session.update(hotel);
-            transaction.commit();
-            System.out.println("Done");
-
-        } catch (HibernateException e) {
-            System.err.println("Can't update hotel with ID: " + hotel.getId());
-            e.printStackTrace();
-            if (transaction != null)
-                transaction.rollback();
-        }
-        return hotel;
+    protected Hotel update(Hotel hotel) {
+        return super.update(hotel);
     }
 
 

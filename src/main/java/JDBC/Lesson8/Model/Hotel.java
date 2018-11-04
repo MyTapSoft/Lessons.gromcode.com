@@ -1,10 +1,12 @@
 package JDBC.Lesson8.Model;
 
+import JDBC.Lesson8.DAO.IdEntity;
+
 import javax.persistence.*;
 import java.util.List;
 @Entity
 @Table(name = "HOTEL")
-public class Hotel {
+public class Hotel extends IdEntity {
     @Id
     @SequenceGenerator(name = "HT_SEQ", sequenceName = "HOTEL_SEQ", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "HT_SEQ")
@@ -18,11 +20,7 @@ public class Hotel {
     private String city;
     @Column(name = "STREET")
     private String street;
-<<<<<<< HEAD
     @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-=======
-    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL, orphanRemoval = true)
->>>>>>> 7f3e887d27be480a19cbd217de150fb5a64f2e65
     private List<Room> rooms;
 
     public long getId() {
