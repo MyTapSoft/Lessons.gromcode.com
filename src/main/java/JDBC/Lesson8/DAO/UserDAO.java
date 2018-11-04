@@ -9,27 +9,14 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
 
-public class UserDAO {
-    private static SessionFactory sessionFactory;
+public class UserDAO extends GeneralDAO<User> {
+    private SessionFactory sessionFactory;
 
-    public static User save(User user) {
-        Transaction transaction = null;
-        try (Session session = createSessionFactory().openSession()) {
-            transaction = session.getTransaction();
-            transaction.begin();
-            session.save(user);
-            transaction.commit();
-            System.out.println("Done");
-        } catch (HibernateException e) {
-            System.err.println("Can't save User with ID: " + user.getId());
-            e.printStackTrace();
-            if (transaction != null)
-                transaction.rollback();
-        }
+    public User save(User user) {
         return user;
     }
 
-    public static User findById(long id) {
+    public User findById(long id) {
         Transaction transaction = null;
         User result = null;
         try (Session session = createSessionFactory().openSession()) {
@@ -47,41 +34,15 @@ public class UserDAO {
         return result;
     }
 
-    public static void delete(long id) {
-        Transaction transaction = null;
-        try (Session session = createSessionFactory().openSession()) {
-            transaction = session.getTransaction();
-            transaction.begin();
-            session.delete(session.get(User.class, id));
-            transaction.commit();
-            System.out.println("Done");
-
-        } catch (HibernateException e) {
-            System.err.println("Can't delete User with ID: " + id);
-            e.printStackTrace();
-            if (transaction != null) transaction.rollback();
-        }
+    public void delete(long id) {
+        super.delete(findById(id));
     }
 
-    public static User update(User user) {
-        Transaction transaction = null;
-        try (Session session = createSessionFactory().openSession()) {
-            transaction = session.getTransaction();
-            transaction.begin();
-            session.update(user);
-            transaction.commit();
-            System.out.println("Done");
-
-        } catch (HibernateException e) {
-            System.err.println("Can't update User with ID: " + user.getId());
-            e.printStackTrace();
-            if (transaction != null)
-                transaction.rollback();
-        }
-        return user;
+    public User update(User user) {
+        return super.update(user);
     }
 
-    public static User login(String name, String password) throws BadRequestException {
+    public User login(String name, String password) throws BadRequestException {
         Transaction transaction = null;
         User result = null;
         try (Session session = createSessionFactory().openSession()) {
@@ -105,12 +66,12 @@ public class UserDAO {
         return update(result);
     }
 
-    public static User logout(User user) {
+    public User logout(User user) {
         user.setLoginStatus(false);
         return update(user);
     }
 
-    private static SessionFactory createSessionFactory() {
+    private SessionFactory createSessionFactory() {
         if (sessionFactory == null)
             sessionFactory = new Configuration().configure().buildSessionFactory();
         return sessionFactory;

@@ -1,10 +1,12 @@
 package JDBC.Lesson8.Model;
 
+import JDBC.Lesson8.DAO.IdEntity;
+
 import javax.persistence.*;
 import java.util.Date;
 @Entity
 @Table(name = "ORDERS")
-public class Order {
+public class Order extends IdEntity {
     @Id
     @SequenceGenerator(name = "HT_SEQ", sequenceName = "HOTEL_SEQ", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "HT_SEQ")

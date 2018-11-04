@@ -13,28 +13,14 @@ import org.hibernate.cfg.Configuration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoomDAO {
-    private static SessionFactory sessionFactory;
+public class RoomDAO extends GeneralDAO<Room> {
+    private SessionFactory sessionFactory;
 
-    public static Room save(Room room) {
-        if (room == null) throw new NullPointerException("Hotel's null");
-        Transaction transaction = null;
-        try (Session session = createSessionFactory().openSession()) {
-            transaction = session.getTransaction();
-            transaction.begin();
-            session.save(room);
-            transaction.commit();
-            System.out.println("Done");
-        } catch (HibernateException e) {
-            System.err.println("Can't save room with ID: " + room.getId());
-            e.printStackTrace();
-            if (transaction != null)
-                transaction.rollback();
-        }
-        return room;
+    public Room save(Room room) {
+        return super.save(room);
     }
 
-    public static Room findById(long id) {
+    public Room findById(long id) {
         Transaction transaction = null;
         Room result = null;
         try (Session session = createSessionFactory().openSession()) {
@@ -52,42 +38,15 @@ public class RoomDAO {
         return result;
     }
 
-    public static void delete(long id){
-        Transaction transaction = null;
-        try(Session session = createSessionFactory().openSession()){
-            transaction = session.getTransaction();
-            transaction.begin();
-            session.delete(session.get(Room.class, id));
-            transaction.commit();
-            System.out.println("Done");
-
-        }catch (HibernateException e) {
-            System.err.println("Can't delete hotel with ID: " + id);
-            e.printStackTrace();
-            if (transaction != null) transaction.rollback();
-        }
+    public void delete(long id) {
+        super.delete(findById(id));
     }
 
-    public static Room update(Room room) {
-        if (room == null) throw new NullPointerException("Hotel's null");
-        Transaction transaction = null;
-        try (Session session = createSessionFactory().openSession()) {
-            transaction = session.getTransaction();
-            transaction.begin();
-            session.update(room);
-            transaction.commit();
-            System.out.println("Done");
-
-        } catch (HibernateException e) {
-            System.err.println("Can't update room with ID: " + room.getId());
-            e.printStackTrace();
-            if (transaction != null)
-                transaction.rollback();
-        }
-        return room;
+    public Room update(Room room) {
+        return super.update(room);
     }
 
-    public static List<Room> findRooms(Filter filter) throws BadRequestException {
+    public List<Room> findRooms(Filter filter) throws BadRequestException {
         if (filter == null) throw new NullPointerException("Filter is NULL");
         Transaction transaction = null;
         List<Room> result = new ArrayList<>();
@@ -113,7 +72,7 @@ public class RoomDAO {
     }
 
 
-    private static SessionFactory createSessionFactory() {
+    private SessionFactory createSessionFactory() {
         if (sessionFactory == null)
             sessionFactory = new Configuration().configure().buildSessionFactory();
         return sessionFactory;

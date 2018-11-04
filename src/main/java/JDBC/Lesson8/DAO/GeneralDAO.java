@@ -1,6 +1,5 @@
 package JDBC.Lesson8.DAO;
 
-import JDBC.Lesson8.Exceptions.BadRequestException;
 import JDBC.Lesson8.Model.Hotel;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -8,82 +7,59 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class HotelDAO extends GeneralDAO<Hotel> {
+public class GeneralDAO<T extends IdEntity> {
     private SessionFactory sessionFactory;
 
-    public List<Hotel> findHotelByName(String name) throws BadRequestException {
+    protected T save(T var) {
         Transaction transaction = null;
-        List<Hotel> result = new ArrayList<>();
         try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            org.hibernate.query.Query<Hotel> query = session.createQuery("FROM Hotel WHERE NAME = :name", Hotel.class);
-            query.setParameter("name", name);
-            result = query.list();
+            session.save(var);
             transaction.commit();
+            System.out.println("Done");
         } catch (HibernateException e) {
-            System.err.println("Error with findByName transaction");
+            System.err.println("Can't save object with ID: " + var.getId());
             e.printStackTrace();
             if (transaction != null)
                 transaction.rollback();
         }
-        if (result.size() == 0) throw new BadRequestException("Hotel with name: " + name + " doesn't exist");
-        return result;
+        return var;
     }
 
-    public List<Hotel> findHotelByCity(String city) throws BadRequestException {
+    protected T update(T var) {
         Transaction transaction = null;
-        List<Hotel> result = new ArrayList<>();
         try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            org.hibernate.query.Query<Hotel> query = session.createQuery("FROM Hotel WHERE CITY = :city", Hotel.class);
-            query.setParameter("city", city);
-            result = query.list();
-            transaction.commit();
-        } catch (HibernateException e) {
-            System.err.println("Error with findByName transaction");
-            e.printStackTrace();
-            if (transaction != null)
-                transaction.rollback();
-        }
-        if (result.size() == 0) throw new BadRequestException("Hotel with city: " + city + " doesn't exist");
-        return result;
-    }
-
-    public Hotel save(Hotel hotel) {
-        return super.save(hotel);
-    }
-
-    public Hotel findById(long id) {
-        Transaction transaction = null;
-        Hotel result = null;
-        try (Session session = createSessionFactory().openSession()) {
-            transaction = session.getTransaction();
-            transaction.begin();
-            result = session.get(Hotel.class, id);
+            session.update(var);
             transaction.commit();
             System.out.println("Done");
 
         } catch (HibernateException e) {
-            System.err.println("Can't findById hotel with ID: " + id);
+            System.err.println("Can't update object with ID: " + var.getId());
+            e.printStackTrace();
+            if (transaction != null)
+                transaction.rollback();
+        }
+        return var;
+    }
+
+    protected void delete(T var) {
+        Transaction transaction = null;
+        try (Session session = createSessionFactory().openSession()) {
+            transaction = session.getTransaction();
+            transaction.begin();
+            session.delete(session.get(var.getClass(), var.getId()));
+            transaction.commit();
+            System.out.println("Done");
+
+        } catch (HibernateException e) {
+            System.err.println("Can't delete object with ID: " + var.getId());
             e.printStackTrace();
             if (transaction != null) transaction.rollback();
         }
-        return result;
     }
-
-    public void delete(long id) {
-        super.delete(findById(id));
-    }
-
-    public Hotel update(Hotel hotel) {
-        return super.update(hotel);
-    }
-
 
     private SessionFactory createSessionFactory() {
         if (sessionFactory == null)

@@ -1,11 +1,13 @@
 package JDBC.Lesson8.Model;
 
+import JDBC.Lesson8.DAO.IdEntity;
+
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "USERS")
-public class User {
+public class User extends IdEntity {
     @Id
     @SequenceGenerator(name = "HT_SEQ", sequenceName = "HOTEL_SEQ", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "HT_SEQ")
@@ -19,7 +21,7 @@ public class User {
     private String country;
     @Column(name = "USER_TYPE")
     private UserType userType;
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "userOrdered", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Order> orders;
     @Column(name = "LOGIN_STATUS")
     private boolean loginStatus;
