@@ -21,21 +21,7 @@ public class RoomDAO extends GeneralDAO<Room> {
     }
 
     public Room findById(long id) {
-        Transaction transaction = null;
-        Room result = null;
-        try (Session session = createSessionFactory().openSession()) {
-            transaction = session.getTransaction();
-            transaction.begin();
-            result = session.get(Room.class, id);
-            transaction.commit();
-            System.out.println("Done");
-
-        } catch (HibernateException e) {
-            System.err.println("Can't findById hotel with ID: " + id);
-            e.printStackTrace();
-            if (transaction != null) transaction.rollback();
-        }
-        return result;
+        return super.findById(new Room(), id);
     }
 
     public void delete(long id) {

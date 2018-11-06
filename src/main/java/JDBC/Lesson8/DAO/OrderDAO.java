@@ -20,21 +20,7 @@ public class OrderDAO extends GeneralDAO<Order> {
     }
 
     public Order findById(long id) {
-        Transaction transaction = null;
-        Order result = null;
-        try (Session session = createSessionFactory().openSession()) {
-            transaction = session.getTransaction();
-            transaction.begin();
-            result = session.get(Order.class, id);
-            transaction.commit();
-            System.out.println("Done");
-
-        } catch (HibernateException e) {
-            System.err.println("Can't findById hotel with ID: " + id);
-            e.printStackTrace();
-            if (transaction != null) transaction.rollback();
-        }
-        return result;
+        return super.findById(new Order(), id);
     }
 
     public Order findById(long roomId, long userId) throws BadRequestException {

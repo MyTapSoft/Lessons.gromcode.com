@@ -2,6 +2,7 @@ package JDBC.Lesson8.DAO;
 
 import JDBC.Lesson8.Exceptions.BadRequestException;
 import JDBC.Lesson8.Model.Hotel;
+import JDBC.Lesson8.Model.User;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -59,21 +60,7 @@ public class HotelDAO extends GeneralDAO<Hotel> {
     }
 
     public Hotel findById(long id) {
-        Transaction transaction = null;
-        Hotel result = null;
-        try (Session session = createSessionFactory().openSession()) {
-            transaction = session.getTransaction();
-            transaction.begin();
-            result = session.get(Hotel.class, id);
-            transaction.commit();
-            System.out.println("Done");
-
-        } catch (HibernateException e) {
-            System.err.println("Can't findById hotel with ID: " + id);
-            e.printStackTrace();
-            if (transaction != null) transaction.rollback();
-        }
-        return result;
+        return super.findById(new Hotel(), id);
     }
 
     public void delete(long id) {

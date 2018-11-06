@@ -46,7 +46,9 @@ public class Test {
 
 
         HotelDAO hotelDAO = new HotelDAO();
-        hotelDAO.delete(41);
+        RoomDAO roomDAO = new RoomDAO();
+        Room room1 = roomDAO.findById(48);
+        System.out.println(room1.getHotel());
     }
 
 }

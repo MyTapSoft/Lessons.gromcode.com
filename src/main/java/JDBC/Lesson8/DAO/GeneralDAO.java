@@ -60,6 +60,24 @@ public class GeneralDAO<T extends IdEntity> {
         }
     }
 
+    protected T findById(T var, long id){
+        Transaction transaction = null;
+        T result = null;
+        try (Session session = createSessionFactory().openSession()) {
+            transaction = session.getTransaction();
+            transaction.begin();
+            result = (T) session.get(var.getClass(), id);
+            transaction.commit();
+            System.out.println("Done");
+
+        } catch (HibernateException e) {
+            System.err.println("Can't findById hotel with ID: " + id);
+            e.printStackTrace();
+            if (transaction != null) transaction.rollback();
+        }
+        return result;
+    }
+
     private SessionFactory createSessionFactory() {
         if (sessionFactory == null)
             sessionFactory = new Configuration().configure().buildSessionFactory();

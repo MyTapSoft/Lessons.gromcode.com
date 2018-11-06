@@ -17,21 +17,7 @@ public class UserDAO extends GeneralDAO<User> {
     }
 
     public User findById(long id) {
-        Transaction transaction = null;
-        User result = null;
-        try (Session session = createSessionFactory().openSession()) {
-            transaction = session.getTransaction();
-            transaction.begin();
-            result = session.get(User.class, id);
-            transaction.commit();
-            System.out.println("Done");
-
-        } catch (HibernateException e) {
-            System.err.println("Can't findById User with ID: " + id);
-            e.printStackTrace();
-            if (transaction != null) transaction.rollback();
-        }
-        return result;
+        return super.findById(new User(), id);
     }
 
     public void delete(long id) {
