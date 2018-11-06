@@ -47,8 +47,8 @@ public class Test {
 
         HotelDAO hotelDAO = new HotelDAO();
         RoomDAO roomDAO = new RoomDAO();
-        Room room1 = roomDAO.findById(48);
-        System.out.println(room1.getHotel());
+        UserDAO userDAO = new UserDAO();
+        System.out.println(roomDAO.findById(48).getNumberOfGuests());
     }
 
 }
