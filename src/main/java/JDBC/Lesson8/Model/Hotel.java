@@ -1,9 +1,12 @@
 package JDBC.Lesson8.Model;
 
 import JDBC.Lesson8.DAO.IdEntity;
+import org.hibernate.collection.internal.PersistentList;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
+
 @Entity
 @Table(name = "HOTEL")
 public class Hotel extends IdEntity {
@@ -20,8 +23,8 @@ public class Hotel extends IdEntity {
     private String city;
     @Column(name = "STREET")
     private String street;
-    @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Room> rooms;
+    @OneToMany(mappedBy = "hotel", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = Room.class)
+    private List<Room> rooms = new ArrayList<>();
 
     public long getId() {
         return id;

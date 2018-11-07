@@ -20,8 +20,8 @@ public class Room extends IdEntity {
     private boolean breakfastIncluded;
     @Column(name = "DATE_AVAILABLE_FROM")
     private Date dateAvailableFrom;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "HOTEL_ID", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Hotel.class)
+    @JoinColumn(name = "HOTEL_ID")
     private Hotel hotel;
 
     public long getId() {

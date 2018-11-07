@@ -17,7 +17,7 @@ public class UserDAO extends GeneralDAO<User> {
     }
 
     public User findById(long id) {
-        return super.findById(new User(), id);
+        return super.findById(User.class, id);
     }
 
     public void delete(long id) {

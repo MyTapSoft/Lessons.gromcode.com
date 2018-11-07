@@ -3,6 +3,7 @@ package JDBC.Lesson8.Model;
 import JDBC.Lesson8.DAO.IdEntity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,8 +22,8 @@ public class User extends IdEntity {
     private String country;
     @Column(name = "USER_TYPE")
     private UserType userType;
-    @OneToMany(mappedBy = "userOrdered", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Order> orders;
+    @OneToMany(mappedBy = "userOrdered", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = Order.class)
+    private List<Order> orders = new ArrayList<>();
     @Column(name = "LOGIN_STATUS")
     private boolean loginStatus;
 

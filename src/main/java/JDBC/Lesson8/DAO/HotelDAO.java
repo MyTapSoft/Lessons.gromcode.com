@@ -60,7 +60,7 @@ public class HotelDAO extends GeneralDAO<Hotel> {
     }
 
     public Hotel findById(long id) {
-        return super.findById(new Hotel(), id);
+        return super.findById(Hotel.class, id);
     }
 
     public void delete(long id) {

@@ -21,7 +21,7 @@ public class RoomDAO extends GeneralDAO<Room> {
     }
 
     public Room findById(long id) {
-       return  super.findById(new Room(), id);
+       return  super.findById(Room.class, id);
     }
 
     public void delete(long id) {

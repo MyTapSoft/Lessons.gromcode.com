@@ -20,7 +20,7 @@ public class OrderDAO extends GeneralDAO<Order> {
     }
 
     public Order findById(long id) {
-        return super.findById(new Order(), id);
+        return super.findById(Order.class, id);
     }
 
     public Order findById(long roomId, long userId) throws BadRequestException {

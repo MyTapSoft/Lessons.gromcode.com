@@ -60,13 +60,13 @@ public class GeneralDAO<T extends IdEntity> {
         }
     }
 
-    protected T findById(T var, long id){
+    protected T findById(Class<?> var, long id){
         Transaction transaction = null;
         T result = null;
         try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            result = (T) session.get(var.getClass(), id);
+            result = (T) session.get(var, id);
             transaction.commit();
             System.out.println("Done");
 
