@@ -4,6 +4,7 @@ import JDBC.Lesson8.DAO.IdEntity;
 
 import javax.persistence.*;
 import java.util.Date;
+
 @Entity
 @Table(name = "ROOM")
 public class Room extends IdEntity {
@@ -20,7 +21,7 @@ public class Room extends IdEntity {
     private boolean breakfastIncluded;
     @Column(name = "DATE_AVAILABLE_FROM")
     private Date dateAvailableFrom;
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Hotel.class)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "HOTEL_ID")
     private Hotel hotel;
 

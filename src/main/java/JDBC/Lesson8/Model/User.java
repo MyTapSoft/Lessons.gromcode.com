@@ -22,7 +22,7 @@ public class User extends IdEntity {
     private String country;
     @Column(name = "USER_TYPE")
     private UserType userType;
-    @OneToMany(mappedBy = "userOrdered", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = Order.class)
+    @OneToMany( targetEntity = Order.class, mappedBy = "userOrdered", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Order> orders = new ArrayList<>();
     @Column(name = "LOGIN_STATUS")
     private boolean loginStatus;
