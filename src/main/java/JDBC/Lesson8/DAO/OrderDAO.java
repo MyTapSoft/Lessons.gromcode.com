@@ -29,7 +29,7 @@ public class OrderDAO extends GeneralDAO<Order> {
         try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            org.hibernate.query.Query<Order> query = session.createQuery("FROM Order WHERE ROOM_ID = :roomId AND USER_ID = :userId", Order.class);
+            org.hibernate.query.Query<Order> query = session.createQuery("FROM Order WHERE ROOM_ID = :roomId AND USERS_ID = :userId", Order.class);
             query.setParameter("roomId", roomId);
             query.setParameter("userId", userId);
             result = query.uniqueResult();
@@ -40,13 +40,14 @@ public class OrderDAO extends GeneralDAO<Order> {
             if (transaction != null)
                 transaction.rollback();
         }
-        if (result == null)
-            throw new BadRequestException("Order with room ID: " + roomId + " and user ID: " + userId + " doesn't exist");
+        if (result == null){
+            closeSession();
+            throw new BadRequestException("Order with room ID: " + roomId + " and user ID: " + userId + " doesn't exist");}
         return result;
     }
 
     public void delete(long id) {
-        super.delete(findById(id));
+        super.delete(Order.class, id);
     }
 
     public Order update(Order order) {
@@ -58,5 +59,8 @@ public class OrderDAO extends GeneralDAO<Order> {
         if (sessionFactory == null)
             sessionFactory = new Configuration().configure().buildSessionFactory();
         return sessionFactory;
+    }
+    private void closeSession(){
+        sessionFactory.close();
     }
 }

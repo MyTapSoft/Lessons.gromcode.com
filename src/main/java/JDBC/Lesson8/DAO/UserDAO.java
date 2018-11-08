@@ -13,7 +13,7 @@ public class UserDAO extends GeneralDAO<User> {
     private SessionFactory sessionFactory;
 
     public User save(User user) {
-        return user;
+        return super.save(user);
     }
 
     public User findById(long id) {
@@ -21,7 +21,7 @@ public class UserDAO extends GeneralDAO<User> {
     }
 
     public void delete(long id) {
-        super.delete(findById(id));
+        super.delete(User.class, id);
     }
 
     public User update(User user) {
@@ -45,9 +45,14 @@ public class UserDAO extends GeneralDAO<User> {
             if (transaction != null)
                 transaction.rollback();
         }
-        if (result == null)
+        if (result == null) {
+            closeSession();
             throw new BadRequestException("User with name: " + name + " and password: " + password + " doesn't exist");
-        if (result.isLoginStatus()) throw new BadRequestException("User already logged in");
+        }
+        if (result.isLoginStatus()) {
+            closeSession();
+            throw new BadRequestException("User already logged in");
+        }
         result.setLoginStatus(true);
         return update(result);
     }
@@ -61,5 +66,9 @@ public class UserDAO extends GeneralDAO<User> {
         if (sessionFactory == null)
             sessionFactory = new Configuration().configure().buildSessionFactory();
         return sessionFactory;
+    }
+
+    private void closeSession() {
+        sessionFactory.close();
     }
 }

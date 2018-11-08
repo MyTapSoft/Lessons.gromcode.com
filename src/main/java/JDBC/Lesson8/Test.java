@@ -1,6 +1,8 @@
 package JDBC.Lesson8;
 
+import JDBC.Lesson8.Controller.Controller;
 import JDBC.Lesson8.DAO.*;
+import JDBC.Lesson8.Exceptions.BadRequestException;
 import JDBC.Lesson8.Model.*;
 import org.hibernate.Hibernate;
 import org.hibernate.collection.internal.PersistentList;
@@ -10,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Test {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws BadRequestException {
         User user = new User();
         user.setLoginStatus(false);
         user.setCountry("USA");
@@ -30,23 +32,20 @@ public class Test {
         room.setNumberOfGuests(3);
         room.setPrice(10);
         room.setHotel(hotel);
-        System.out.println(room);
 
         Room room2 = new Room();
-        room.setBreakfastIncluded(false);
-        room.setDateAvailableFrom(new Date());
-        room.setNumberOfGuests(32);
-        room.setPrice(102);
-        room.setHotel(hotel);
-        System.out.println(room2);
+        room2.setBreakfastIncluded(false);
+        room2.setDateAvailableFrom(new Date());
+        room2.setNumberOfGuests(32);
+        room2.setPrice(102);
+        room2.setHotel(hotel);
 
         Room room3 = new Room();
-        room.setBreakfastIncluded(true);
-        room.setDateAvailableFrom(new Date());
-        room.setNumberOfGuests(3);
-        room.setPrice(10);
-        room.setHotel(hotel);
-        System.out.println(room3);
+        room3.setBreakfastIncluded(true);
+        room3.setDateAvailableFrom(new Date());
+        room3.setNumberOfGuests(3);
+        room3.setPrice(10);
+        room3.setHotel(hotel);
 
         Order order = new Order();
         order.setMoneyPaid(54.4);
@@ -62,18 +61,30 @@ public class Test {
         rooms.add(room2);
 
         hotel.setRooms(rooms);
-        user.setOrders(orders);
+        //user.setOrders(orders);
 
 
         HotelDAO hotelDAO = new HotelDAO();
         RoomDAO roomDAO = new RoomDAO();
-        //UserDAO userDAO = new UserDAO();
 
-        Hotel hottel = hotelDAO.save(hotel);
-        for (Room r: hotelDAO.findById(hottel.getId()).getRooms()
-             ) {
-            System.out.println(r);
-        }
+        UserDAO userDAO = new UserDAO();
+//        userDAO.save(user);
+
+
+//        Hotel hottel = hotelDAO.save(hotel);
+//        for (Room r: hotelDAO.findById(hottel.getId()).getRooms()
+//             ) {
+//            System.out.println(r);
+//        }
+        Controller controller = new Controller();
+//        System.out.println(controller.bookRoom(196, 200, 195, new Date(), new Date()));
+        controller.findHotelByName("sdf");
+//        Hotel hhotel = hotelDAO.findById(195);
+//        for (Room r: hhotel.getRooms()
+//             ) {
+//            System.out.println(r);
+//
+//        }
 
     }
 

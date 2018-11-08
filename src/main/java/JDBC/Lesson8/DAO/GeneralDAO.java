@@ -16,12 +16,13 @@ public class GeneralDAO<T extends IdEntity> {
             transaction.begin();
             session.save(var);
             transaction.commit();
-            System.out.println("Done");
+            System.out.println("Save method ends well");
         } catch (HibernateException e) {
             System.err.println("Can't save object with ID: " + var.getId());
             e.printStackTrace();
             if (transaction != null)
                 transaction.rollback();
+            closeSession();
         }
         return var;
     }
@@ -33,47 +34,51 @@ public class GeneralDAO<T extends IdEntity> {
             transaction.begin();
             session.update(var);
             transaction.commit();
-            System.out.println("Done");
+            System.out.println("Update method ends well");
 
         } catch (HibernateException e) {
             System.err.println("Can't update object with ID: " + var.getId());
             e.printStackTrace();
             if (transaction != null)
                 transaction.rollback();
+            closeSession();
         }
         return var;
     }
 
-    protected void delete(T var) {
+    protected void delete(Class<?> objectClass, long id) {
         Transaction transaction = null;
         try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            session.delete(session.get(var.getClass(), var.getId()));
+            T object = findById(objectClass, id);
+            session.delete(object);
             transaction.commit();
-            System.out.println("Done");
+            System.out.println("Delete method ends well");
 
         } catch (HibernateException e) {
-            System.err.println("Can't delete object with ID: " + var.getId());
+            System.err.println("Can't delete object with ID: " + id);
             e.printStackTrace();
             if (transaction != null) transaction.rollback();
+            closeSession();
         }
     }
 
-    protected T findById(Class<?> var, long id){
+    protected T findById(Class<?> objectClass, long id) {
         Transaction transaction = null;
         T result = null;
         try (Session session = createSessionFactory().openSession()) {
             transaction = session.getTransaction();
             transaction.begin();
-            result = (T) session.get(var, id);
+            result = (T) session.get(objectClass, id);
             transaction.commit();
-            System.out.println("Done");
+            System.out.println("Get method ends well");
 
         } catch (HibernateException e) {
             System.err.println("Can't findById hotel with ID: " + id);
             e.printStackTrace();
             if (transaction != null) transaction.rollback();
+            closeSession();
         }
         return result;
     }
@@ -82,5 +87,9 @@ public class GeneralDAO<T extends IdEntity> {
         if (sessionFactory == null)
             sessionFactory = new Configuration().configure().buildSessionFactory();
         return sessionFactory;
+    }
+
+    private void closeSession() {
+        sessionFactory.close();
     }
 }

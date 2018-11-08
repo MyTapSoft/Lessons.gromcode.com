@@ -12,10 +12,10 @@ public class Order extends IdEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "HT_SEQ")
     @Column(name = "ID")
     private long id;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "USERS_ID")
     private User userOrdered;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ROOM_ID")
     private Room room;
     @Column(name = "DATE_FROM")

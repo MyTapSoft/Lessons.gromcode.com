@@ -22,7 +22,7 @@ public class User extends IdEntity {
     private String country;
     @Column(name = "USER_TYPE")
     private UserType userType;
-    @OneToMany( targetEntity = Order.class, mappedBy = "userOrdered", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany( targetEntity = Order.class, mappedBy = "userOrdered", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Order> orders = new ArrayList<>();
     @Column(name = "LOGIN_STATUS")
     private boolean loginStatus;
@@ -91,7 +91,6 @@ public class User extends IdEntity {
                 ", password='" + password + '\'' +
                 ", country='" + country + '\'' +
                 ", userType=" + userType +
-                ", orders=" + orders +
                 ", loginStatus=" + loginStatus +
                 '}';
     }

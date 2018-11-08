@@ -21,11 +21,11 @@ public class RoomDAO extends GeneralDAO<Room> {
     }
 
     public Room findById(long id) {
-       return  super.findById(Room.class, id);
+        return super.findById(Room.class, id);
     }
 
     public void delete(long id) {
-        super.delete(findById(id));
+        super.delete(Room.class, id);
     }
 
     public Room update(Room room) {
@@ -53,7 +53,10 @@ public class RoomDAO extends GeneralDAO<Room> {
             if (transaction != null)
                 transaction.rollback();
         }
-        if (result.size() == 0) throw new BadRequestException("Hotel with filter: " + filter + " doesn't exist");
+        if (result.size() == 0) {
+            closeSession();
+            throw new BadRequestException("Hotel with filter: " + filter + " doesn't exist");
+        }
         return result;
     }
 
@@ -62,5 +65,8 @@ public class RoomDAO extends GeneralDAO<Room> {
         if (sessionFactory == null)
             sessionFactory = new Configuration().configure().buildSessionFactory();
         return sessionFactory;
+    }
+    private void closeSession(){
+        sessionFactory.close();
     }
 }

@@ -80,7 +80,7 @@ public class Hotel extends IdEntity {
                 ", country='" + country + '\'' +
                 ", city='" + city + '\'' +
                 ", street='" + street + '\'' +
-                ", rooms=" + rooms +
                 '}';
     }
+
 }

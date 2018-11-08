@@ -31,7 +31,10 @@ public class HotelDAO extends GeneralDAO<Hotel> {
             if (transaction != null)
                 transaction.rollback();
         }
-        if (result.size() == 0) throw new BadRequestException("Hotel with name: " + name + " doesn't exist");
+        if (result.size() == 0) {
+            closeSession();
+            throw new BadRequestException("Hotel with name: " + name + " doesn't exist");
+        }
         return result;
     }
 
@@ -51,7 +54,10 @@ public class HotelDAO extends GeneralDAO<Hotel> {
             if (transaction != null)
                 transaction.rollback();
         }
-        if (result.size() == 0) throw new BadRequestException("Hotel with city: " + city + " doesn't exist");
+        if (result.size() == 0) {
+            closeSession();
+            throw new BadRequestException("Hotel with city: " + city + " doesn't exist");
+        }
         return result;
     }
 
@@ -64,7 +70,7 @@ public class HotelDAO extends GeneralDAO<Hotel> {
     }
 
     public void delete(long id) {
-        super.delete(findById(id));
+        super.delete(Hotel.class, id);
     }
 
     public Hotel update(Hotel hotel) {
@@ -76,5 +82,9 @@ public class HotelDAO extends GeneralDAO<Hotel> {
         if (sessionFactory == null)
             sessionFactory = new Configuration().configure().buildSessionFactory();
         return sessionFactory;
+    }
+
+    private void closeSession() {
+        sessionFactory.close();
     }
 }

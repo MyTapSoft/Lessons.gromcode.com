@@ -42,7 +42,7 @@ public class Service {
         if (user == null) throw new BadRequestException("There's no user with id: " + userId);
         Hotel hotel = hotelDAO.findById(hotelId);
         if (hotel == null) throw new BadRequestException("There's no hotel with id: " + hotelId);
-        if (!hotel.getRooms().contains(room)) throw new BadRequestException("Room: " + roomId + " doesn't belong to hotel: " + hotelId);
+        validateHotel(hotel, roomId);
 
         double price = (dateTo.getTime() - dateFrom.getTime()) / (1000 * 60 * 60) * room.getPrice();
         order.setRoom(room);
@@ -73,6 +73,13 @@ public class Service {
         if (user == null) throw new BadRequestException("User is null");
         if (!user.isLoginStatus()) throw new BadRequestException("User already logged out");
         return userDAO.logout(user);
+    }
+
+    private void validateHotel(Hotel hotel, long roomId) throws BadRequestException {
+        for (Room r : hotel.getRooms()) {
+            if (r.getId() == roomId) return;
+        }
+        throw new BadRequestException("Room: " + roomId + " doesn't belong to hotel: " + hotel.getId());
     }
 
 }
